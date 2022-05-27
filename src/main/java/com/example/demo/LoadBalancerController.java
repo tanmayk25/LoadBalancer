@@ -35,7 +35,7 @@ public class LoadBalancerController {
         String requestUrl = request.getRequestURI();
         System.out.println(method.toString());
         System.out.println(requestUrl);
-        int port = loadBalancer.loadBalance();
+        int port = loadBalancer.loadBalance(method.toString());
         URI uri = new URI("http", null, "localhost", port, null, null, null);
         uri = UriComponentsBuilder.fromUri(uri)
                 .path(requestUrl)

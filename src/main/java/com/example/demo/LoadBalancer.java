@@ -8,15 +8,24 @@ import java.util.*;
 public class LoadBalancer {
     @Value("#{${nodeMap}}")
     private Map<Integer,Integer> nodeMap;
+    @Value("${leader}")
+    private int leader;
 
     Queue<Integer> roundRobin = new LinkedList<Integer>();
     Boolean queueInitialized = Boolean.FALSE;
-     int loadBalance(){
-        int node = roundRobin.remove();
-        roundRobin.add(node);
-        int port = nodeMap.get(node);
-        System.out.println("Request is being completed by " + port + "\nLoad balancer queue " + roundRobin);
-        return port;
+     int loadBalance(String request){
+         if(request.equals("GET")) {
+             int node = roundRobin.remove();
+             roundRobin.add(node);
+             int port = nodeMap.get(node);
+             System.out.println("Request is being completed by " + port + "\nLoad balancer queue " + roundRobin);
+             return port;
+         }
+         else {
+             System.out.println("Request is being completed by " + leader);
+             return nodeMap.get(leader);
+         }
+
      }
 
      void initializeQueue() {
@@ -24,7 +33,6 @@ public class LoadBalancer {
          nodes.add(1);
          nodes.add(2);
          nodes.add(3);
-         nodes.add(4);
          for (int i = 0; i < nodes.size(); i++){
              roundRobin.add(nodes.get(i));
          }
