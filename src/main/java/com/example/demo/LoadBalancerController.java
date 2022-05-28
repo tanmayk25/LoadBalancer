@@ -22,25 +22,23 @@ public class LoadBalancerController {
     @Autowired
     LoadBalancer loadBalancer;
 
-    @PostMapping("/node/leader/{leader}")
+    @GetMapping("/node/leader/{leader}")
     public ResponseEntity<Integer> setLeader(@PathVariable int leader) {
+        System.out.println("Setting leader to: " + leader);
         loadBalancer.setLeader(leader);
         return ResponseEntity.ok(loadBalancer.getLeader());
     }
 
-    @PostMapping("/node/remove/{nodeid}")
+    @GetMapping("/node/remove/{nodeid}")
     public ResponseEntity removeNode (@PathVariable int nodeid) {
         loadBalancer.updateQueue(nodeid);
         loadBalancer.updateNodeMap(nodeid);
         return ResponseEntity.ok().build();
     }
-    @RequestMapping("/**")
+    @RequestMapping("/document/**")
     public ResponseEntity mirrorRest(@RequestBody(required = false) String body,
                                      HttpMethod method, HttpServletRequest request, HttpServletResponse response)
             throws URISyntaxException {
-        if( loadBalancer.getQueueInitialized() == Boolean.FALSE){
-            loadBalancer.initializeQueue();
-        }
         String requestUrl = request.getRequestURI();
         System.out.println(method.toString());
         System.out.println(requestUrl);

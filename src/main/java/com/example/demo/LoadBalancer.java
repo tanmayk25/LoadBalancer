@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,7 +35,7 @@ public class LoadBalancer {
          }
 
      }
-
+     @EventListener(ApplicationReadyEvent.class)
      void initializeQueue() {
          List<Integer> nodes = new ArrayList<Integer>();
          nodes.add(1);
@@ -72,5 +74,8 @@ public class LoadBalancer {
     public int getLeader() {
         return leader;
     }
+
+
+
 
 }
