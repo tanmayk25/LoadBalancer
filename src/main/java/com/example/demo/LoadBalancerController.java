@@ -14,10 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class LoadBalancerController {
@@ -25,6 +22,18 @@ public class LoadBalancerController {
     @Autowired
     LoadBalancer loadBalancer;
 
+    @PostMapping("/node/leader/{leader}")
+    public ResponseEntity<Integer> setLeader(@PathVariable int leader) {
+        loadBalancer.setLeader(leader);
+        return ResponseEntity.ok(loadBalancer.getLeader());
+    }
+
+    @PostMapping("/node/remove/{nodeid}")
+    public ResponseEntity removeNode (@PathVariable int nodeid) {
+        loadBalancer.updateQueue(nodeid);
+        loadBalancer.updateNodeMap(nodeid);
+        return ResponseEntity.ok().build();
+    }
     @RequestMapping("/**")
     public ResponseEntity mirrorRest(@RequestBody(required = false) String body,
                                      HttpMethod method, HttpServletRequest request, HttpServletResponse response)

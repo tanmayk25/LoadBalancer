@@ -4,10 +4,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class LoadBalancer {
-    @Value("#{${nodeMap}}")
     private Map<Integer,Integer> nodeMap;
+    @Value("#{${nodeMap}}")
+    public void setNodeMap(Map<Integer, Integer> nodeMap) {
+        this.nodeMap = new HashMap<>(nodeMap);
+    }
+
     @Value("${leader}")
     private int leader;
 
@@ -39,7 +45,7 @@ public class LoadBalancer {
          System.out.println("Node List " + roundRobin);
          queueInitialized = Boolean.TRUE;
      }
-     void updateQueue(int newNode, int removeNode) {
+     void updateQueue(int removeNode) {
          Iterator itr = roundRobin.iterator();
          while (itr.hasNext())
          {
@@ -47,15 +53,24 @@ public class LoadBalancer {
              if (data == removeNode)
                  itr.remove();
          }
-         roundRobin.add(newNode);
          System.out.println("New Queue: " + roundRobin);
      }
 
+     void updateNodeMap(int removeNode) {
+         nodeMap.remove(removeNode);
+         System.out.println("Node map updated" + nodeMap);
+     }
     public Boolean getQueueInitialized() {
         return queueInitialized;
     }
-    //     void processRequest(int id, String request) {
-//         String address = nodeMap.get(id);
-//         System.out.println("Node: "+id+" sending request to: " + address);
-//     }
+
+    public void setLeader(int leader) {
+        this.leader = leader;
+        updateQueue(leader);
+    }
+
+    public int getLeader() {
+        return leader;
+    }
+
 }
