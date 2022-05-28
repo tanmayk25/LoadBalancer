@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -9,6 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class LoadBalancer {
     private Map<Integer,Integer> nodeMap;
     @Value("#{${nodeMap}}")
@@ -26,11 +28,12 @@ public class LoadBalancer {
              int node = roundRobin.remove();
              roundRobin.add(node);
              int port = nodeMap.get(node);
-             System.out.println("Request is being completed by " + port + "\nLoad balancer queue " + roundRobin);
+             log.info("Load Balancer: Request is being completed by {}", node);
+             log.info("Load Balancer: Queue {}", roundRobin);
              return port;
          }
          else {
-             System.out.println("Request is being completed by " + leader);
+             log.info("Load Balancer: Request is being completed by {}", leader);
              return nodeMap.get(leader);
          }
 
@@ -44,8 +47,7 @@ public class LoadBalancer {
          for (int i = 0; i < nodes.size(); i++){
              roundRobin.add(nodes.get(i));
          }
-         System.out.println("Node List " + roundRobin);
-         queueInitialized = Boolean.TRUE;
+         log.info("Load Balancer: Node list {}", roundRobin);
      }
      void updateQueue(int removeNode) {
          Iterator itr = roundRobin.iterator();
@@ -55,16 +57,13 @@ public class LoadBalancer {
              if (data == removeNode)
                  itr.remove();
          }
-         System.out.println("New Queue: " + roundRobin);
+         log.info("Load Balancer: New Queue {}", roundRobin);
      }
 
      void updateNodeMap(int removeNode) {
          nodeMap.remove(removeNode);
-         System.out.println("Node map updated" + nodeMap);
+         log.info("Load Balancer: Node Map Updated {}", nodeMap);
      }
-    public Boolean getQueueInitialized() {
-        return queueInitialized;
-    }
 
     public void setLeader(int leader) {
         this.leader = leader;

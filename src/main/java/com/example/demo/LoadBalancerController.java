@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 
 @RestController
+@Slf4j
 public class LoadBalancerController {
 
     @Autowired
@@ -24,7 +26,7 @@ public class LoadBalancerController {
 
     @GetMapping("/node/leader/{leader}")
     public ResponseEntity<Integer> setLeader(@PathVariable int leader) {
-        System.out.println("Setting leader to: " + leader);
+        log.info("Load Balancer: Setting Leader to {}", leader);
         loadBalancer.setLeader(leader);
         return ResponseEntity.ok(loadBalancer.getLeader());
     }
@@ -40,8 +42,6 @@ public class LoadBalancerController {
                                      HttpMethod method, HttpServletRequest request, HttpServletResponse response)
             throws URISyntaxException {
         String requestUrl = request.getRequestURI();
-        System.out.println(method.toString());
-        System.out.println(requestUrl);
         int port = loadBalancer.loadBalance(method.toString());
         URI uri = new URI("http", null, "localhost", port, null, null, null);
         uri = UriComponentsBuilder.fromUri(uri)
