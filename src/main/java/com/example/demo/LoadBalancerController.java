@@ -33,15 +33,58 @@ public class LoadBalancerController {
 
     @GetMapping("/node/remove/{nodeid}")
     public ResponseEntity removeNode (@PathVariable int nodeid) {
-        loadBalancer.updateQueue(nodeid);
-        loadBalancer.updateNodeMap(nodeid);
+        loadBalancer.removeFromQueue(nodeid);
+        loadBalancer.removeFromNodeMap(nodeid);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/node/map")
+    public ResponseEntity<Map> sendNodeMap () {
+        Map<Object, Object> nodeMap = new HashMap<>();
+        nodeMap.put("leader", loadBalancer.getLeader());
+        nodeMap.put("nodeMap", loadBalancer.getNodeMap());
+        return ResponseEntity.ok(nodeMap);
+    }
+
+    @GetMapping("/node/add/{port}")
+    public ResponseEntity addNode (@PathVariable int port, @RequestBody(required = false) String body,
+                                   HttpMethod method, HttpServletRequest request, HttpServletResponse response)
+            throws URISyntaxException {
+        String requestUrl = "/add/" + loadBalancer.getNextNodeId() + "/" + port;
+        System.out.println(requestUrl);
+        int leaderPort = loadBalancer.getLeaderPort();
+        loadBalancer.addToNodeMap(port);
+        loadBalancer.addToQueue();
+        URI uri = new URI("http", null, "localhost", leaderPort, null, null, null);
+        uri = UriComponentsBuilder.fromUri(uri)
+                .path(requestUrl)
+                .query(request.getQueryString())
+                .build(true).toUri();
+
+        HttpHeaders headers = new HttpHeaders();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            headers.set(headerName, request.getHeader(headerName));
+        }
+
+        HttpEntity<String> httpEntity = new HttpEntity<>(body, headers);
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            return restTemplate.exchange(uri, method, httpEntity, String.class);
+        } catch(HttpStatusCodeException e) {
+            return ResponseEntity.status(e.getRawStatusCode())
+                    .headers(e.getResponseHeaders())
+                    .body(e.getResponseBodyAsString());
+        }
+    }
+
     @RequestMapping("/document/**")
     public ResponseEntity mirrorRest(@RequestBody(required = false) String body,
                                      HttpMethod method, HttpServletRequest request, HttpServletResponse response)
             throws URISyntaxException {
         String requestUrl = request.getRequestURI();
+        System.out.println(requestUrl);
         int port = loadBalancer.loadBalance(method.toString());
         URI uri = new URI("http", null, "localhost", port, null, null, null);
         uri = UriComponentsBuilder.fromUri(uri)

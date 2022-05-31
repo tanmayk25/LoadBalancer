@@ -7,7 +7,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,10 +20,11 @@ public class LoadBalancer {
     @Value("${leader}")
     private int leader;
 
+    private int nextNodeId;
     Queue<Integer> roundRobin = new LinkedList<Integer>();
     Boolean queueInitialized = Boolean.FALSE;
      int loadBalance(String request){
-         if(request.equals("GET")) {
+         if(request.equals("GET") && roundRobin.size() > 0) {
              int node = roundRobin.remove();
              roundRobin.add(node);
              int port = nodeMap.get(node);
@@ -40,16 +40,18 @@ public class LoadBalancer {
      }
      @EventListener(ApplicationReadyEvent.class)
      void initializeQueue() {
-         List<Integer> nodes = new ArrayList<Integer>();
-         nodes.add(1);
-         nodes.add(2);
-         nodes.add(3);
-         for (int i = 0; i < nodes.size(); i++){
-             roundRobin.add(nodes.get(i));
-         }
+         //roundRobin.add(1);
+//         List<Integer> nodes = new ArrayList<Integer>();
+//         nodes.add(1);
+////         nodes.add(2);
+////         nodes.add(3);
+//         for (int i = 0; i < nodes.size(); i++){
+//             roundRobin.add(nodes.get(i));
+//         }
+         nextNodeId = 2;
          log.info("Load Balancer: Node list {}", roundRobin);
      }
-     void updateQueue(int removeNode) {
+     void removeFromQueue(int removeNode) {
          Iterator itr = roundRobin.iterator();
          while (itr.hasNext())
          {
@@ -57,24 +59,43 @@ public class LoadBalancer {
              if (data == removeNode)
                  itr.remove();
          }
-         log.info("Load Balancer: New Queue {}", roundRobin);
+         log.info("Load Balancer: Node Removed. New Queue {}", roundRobin);
      }
 
-     void updateNodeMap(int removeNode) {
+     void addToQueue() {
+         roundRobin.add(nextNodeId);
+         log.info("Load Balancer: New Node added. ID: {}", nextNodeId);
+         nextNodeId += 1;
+     }
+
+     void removeFromNodeMap(int removeNode) {
          nodeMap.remove(removeNode);
          log.info("Load Balancer: Node Map Updated {}", nodeMap);
      }
 
+    void addToNodeMap(int port) {
+        nodeMap.put(nextNodeId, port);
+        log.info("Load Balancer: Node added. New Node Map {}", nodeMap);
+    }
     public void setLeader(int leader) {
+        removeFromNodeMap(this.leader);
         this.leader = leader;
-        updateQueue(leader);
+        removeFromQueue(leader);
     }
 
     public int getLeader() {
         return leader;
     }
+    public int getLeaderPort() {
+        return nodeMap.get(leader);
+    }
 
 
+    public int getNextNodeId() {
+        return nextNodeId;
+    }
 
-
+    public Map<Integer, Integer> getNodeMap() {
+        return nodeMap;
+    }
 }
