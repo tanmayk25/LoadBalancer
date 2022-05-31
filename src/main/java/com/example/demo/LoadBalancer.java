@@ -21,6 +21,7 @@ public class LoadBalancer {
     @Value("${leader}")
     private int leader;
 
+    private int nodeId;
     Queue<Integer> roundRobin = new LinkedList<Integer>();
     Boolean queueInitialized = Boolean.FALSE;
      int loadBalance(String request){
@@ -47,9 +48,10 @@ public class LoadBalancer {
          for (int i = 0; i < nodes.size(); i++){
              roundRobin.add(nodes.get(i));
          }
+         nodeId = 5;
          log.info("Load Balancer: Node list {}", roundRobin);
      }
-     void updateQueue(int removeNode) {
+     void removeFromQueue(int removeNode) {
          Iterator itr = roundRobin.iterator();
          while (itr.hasNext())
          {
@@ -57,24 +59,38 @@ public class LoadBalancer {
              if (data == removeNode)
                  itr.remove();
          }
-         log.info("Load Balancer: New Queue {}", roundRobin);
+         log.info("Load Balancer: Node Removed. New Queue {}", roundRobin);
      }
 
-     void updateNodeMap(int removeNode) {
+     void addToQueue() {
+         roundRobin.add(nodeId);
+         log.info("Load Balancer: New Node added. ID: {}", nodeId);
+         nodeId += 1;
+     }
+
+     void removeFromNodeMap(int removeNode) {
          nodeMap.remove(removeNode);
          log.info("Load Balancer: Node Map Updated {}", nodeMap);
      }
 
+    void addToNodeMap(int port) {
+        nodeMap.put(nodeId, port);
+        log.info("Load Balancer: Node added. New Node Map {}", nodeMap);
+    }
     public void setLeader(int leader) {
         this.leader = leader;
-        updateQueue(leader);
+        removeFromQueue(leader);
     }
 
     public int getLeader() {
         return leader;
     }
+    public int getLeaderPort() {
+        return nodeMap.get(leader);
+    }
 
 
-
-
+    public int getNodeId() {
+        return nodeId;
+    }
 }
