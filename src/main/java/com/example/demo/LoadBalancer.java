@@ -24,7 +24,7 @@ public class LoadBalancer {
     Queue<Integer> roundRobin = new LinkedList<Integer>();
     Boolean queueInitialized = Boolean.FALSE;
      int loadBalance(String request){
-         if(request.equals("GET")) {
+         if(request.equals("GET") && roundRobin.size() > 0) {
              int node = roundRobin.remove();
              roundRobin.add(node);
              int port = nodeMap.get(node);
@@ -40,7 +40,7 @@ public class LoadBalancer {
      }
      @EventListener(ApplicationReadyEvent.class)
      void initializeQueue() {
-         roundRobin.add(1);
+         //roundRobin.add(1);
 //         List<Integer> nodes = new ArrayList<Integer>();
 //         nodes.add(1);
 ////         nodes.add(2);
@@ -78,6 +78,7 @@ public class LoadBalancer {
         log.info("Load Balancer: Node added. New Node Map {}", nodeMap);
     }
     public void setLeader(int leader) {
+        removeFromNodeMap(this.leader);
         this.leader = leader;
         removeFromQueue(leader);
     }
