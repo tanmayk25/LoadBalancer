@@ -93,4 +93,8 @@ public class LoadBalancer {
     public int getNodeId() {
         return nodeId;
     }
+
+    public Map<Integer, Integer> getNodeMap() {
+        return nodeMap;
+    }
 }

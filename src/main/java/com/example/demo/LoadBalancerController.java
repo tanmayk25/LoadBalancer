@@ -38,6 +38,13 @@ public class LoadBalancerController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/node/map")
+    public ResponseEntity<Map> sendNodeMap () {
+        Map<Integer, Integer> nodeMap= new HashMap<Integer, Integer>();
+        nodeMap = loadBalancer.getNodeMap();
+        return ResponseEntity.ok(nodeMap);
+    }
+
     @GetMapping("/node/add/{port}")
     public ResponseEntity addNode (@PathVariable int port, @RequestBody(required = false) String body,
                                    HttpMethod method, HttpServletRequest request, HttpServletResponse response)
