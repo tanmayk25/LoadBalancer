@@ -7,7 +7,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -21,7 +20,7 @@ public class LoadBalancer {
     @Value("${leader}")
     private int leader;
 
-    private int nodeId;
+    private int nextNodeId;
     Queue<Integer> roundRobin = new LinkedList<Integer>();
     Boolean queueInitialized = Boolean.FALSE;
      int loadBalance(String request){
@@ -41,14 +40,15 @@ public class LoadBalancer {
      }
      @EventListener(ApplicationReadyEvent.class)
      void initializeQueue() {
-         List<Integer> nodes = new ArrayList<Integer>();
-         nodes.add(1);
-         nodes.add(2);
-         nodes.add(3);
-         for (int i = 0; i < nodes.size(); i++){
-             roundRobin.add(nodes.get(i));
-         }
-         nodeId = 5;
+         roundRobin.add(1);
+//         List<Integer> nodes = new ArrayList<Integer>();
+//         nodes.add(1);
+////         nodes.add(2);
+////         nodes.add(3);
+//         for (int i = 0; i < nodes.size(); i++){
+//             roundRobin.add(nodes.get(i));
+//         }
+         nextNodeId = 2;
          log.info("Load Balancer: Node list {}", roundRobin);
      }
      void removeFromQueue(int removeNode) {
@@ -63,9 +63,9 @@ public class LoadBalancer {
      }
 
      void addToQueue() {
-         roundRobin.add(nodeId);
-         log.info("Load Balancer: New Node added. ID: {}", nodeId);
-         nodeId += 1;
+         roundRobin.add(nextNodeId);
+         log.info("Load Balancer: New Node added. ID: {}", nextNodeId);
+         nextNodeId += 1;
      }
 
      void removeFromNodeMap(int removeNode) {
@@ -74,7 +74,7 @@ public class LoadBalancer {
      }
 
     void addToNodeMap(int port) {
-        nodeMap.put(nodeId, port);
+        nodeMap.put(nextNodeId, port);
         log.info("Load Balancer: Node added. New Node Map {}", nodeMap);
     }
     public void setLeader(int leader) {
@@ -90,8 +90,8 @@ public class LoadBalancer {
     }
 
 
-    public int getNodeId() {
-        return nodeId;
+    public int getNextNodeId() {
+        return nextNodeId;
     }
 
     public Map<Integer, Integer> getNodeMap() {

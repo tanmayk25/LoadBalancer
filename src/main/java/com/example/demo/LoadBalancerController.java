@@ -49,7 +49,7 @@ public class LoadBalancerController {
     public ResponseEntity addNode (@PathVariable int port, @RequestBody(required = false) String body,
                                    HttpMethod method, HttpServletRequest request, HttpServletResponse response)
             throws URISyntaxException {
-        String requestUrl = "/add/" + loadBalancer.getNodeId() + "/" + port;
+        String requestUrl = "/add/" + loadBalancer.getNextNodeId() + "/" + port;
         System.out.println(requestUrl);
         int leaderPort = loadBalancer.getLeaderPort();
         loadBalancer.addToNodeMap(port);
