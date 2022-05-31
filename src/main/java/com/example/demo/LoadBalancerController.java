@@ -40,8 +40,9 @@ public class LoadBalancerController {
 
     @GetMapping("/node/map")
     public ResponseEntity<Map> sendNodeMap () {
-        Map<Integer, Integer> nodeMap= new HashMap<Integer, Integer>();
-        nodeMap = loadBalancer.getNodeMap();
+        Map<Object, Object> nodeMap = new HashMap<>();
+        nodeMap.put("leader", loadBalancer.getLeader());
+        nodeMap.put("nodeMap", loadBalancer.getNodeMap());
         return ResponseEntity.ok(nodeMap);
     }
 
