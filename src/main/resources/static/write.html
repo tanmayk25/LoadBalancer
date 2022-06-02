@@ -44,9 +44,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="save-ignore-label">Save changes?</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <button type="button" class="btn-close" id="save-ignore-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-success" id="save-changes">Save Changes</button>
@@ -55,22 +53,19 @@
         </div>
       </div>
     </div>
-    <div class="modal fade" id="email-modal" tabindex="-1" role="dialog" aria-labelledby="email-modal-label" aria-hidden="true">
+    <div class="modal fade" id="author-modal" tabindex="-1" role="dialog" aria-labelledby="author-modal-label" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="email-modal-label">Please enter email address</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <h5 class="modal-title" id="author-modal-label">Please enter author name</h5>
           </div>
           <div class="modal-body">
               <form>
-                  <input type="text" class="form-control" id="user-id" placeholder="placeholder@gmail.com">
+                  <input type="text" class="form-control" id="user-id">
               </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="email-submit">Submit</button>
+            <button type="button" class="btn btn-primary" id="author-submit">Submit</button>
           </div>
         </div>
       </div>

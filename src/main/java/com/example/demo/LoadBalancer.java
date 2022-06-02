@@ -7,6 +7,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 @Service
 @Slf4j
@@ -21,7 +22,7 @@ public class LoadBalancer {
     private int leader;
 
     private int nextNodeId;
-    Queue<Integer> roundRobin = new LinkedList<Integer>();
+    Queue<Integer> roundRobin = new ConcurrentLinkedDeque<>();
     Boolean queueInitialized = Boolean.FALSE;
      int loadBalance(String request){
          if(request.equals("GET") && roundRobin.size() > 0) {
