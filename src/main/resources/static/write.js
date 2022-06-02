@@ -68,7 +68,7 @@ $('button#save').on('click', function(){
 });
 
 $('button#save-changes').on('click', function(){
-    saveDoc(0, $('input#docName').val(), tinymce.activeEditor.getContent());
+    saveDoc($('input#docName').val(), tinymce.activeEditor.getContent());
     returnToRead();
 });
 
@@ -96,7 +96,9 @@ function saveDoc(name, content){
         data: JSON.stringify(docObj),
         success: function(data){
             alert('Saved!');
-            // if(requestUrl === 'http://localhost:8080/document/add') sessionStorage.setItem('currentDocumentID', data.id);
+            console.log(data.id);
+            sessionStorage.setItem('currentDocumentID', data.id);
+            console.log(sessionStorage.getItem('currentDocumentID'));
             // if(requestUrl === 'http://localhost:8080/document/add') window.location = './index.html';
         },
         error: function(){
