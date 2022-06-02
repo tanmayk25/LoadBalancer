@@ -1,4 +1,4 @@
-Hoe to run this Load Balancer
+How to run this Load Balancer
 
 Prerequisites:
 1. JDK (minimum version required is 11): https://openjdk.java.net/install/
