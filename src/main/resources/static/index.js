@@ -1,5 +1,5 @@
 const template = $('tr#template');
-// template.hide();
+template.hide();
 const modal = $('#author-modal');
 
 $(function(){

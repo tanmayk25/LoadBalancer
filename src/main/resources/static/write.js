@@ -12,24 +12,23 @@ $('textarea#tiny').tinymce({
       'bullist numlist outdent indent | removeformat | help',
     init_instance_callback: function(editor){
         if(sessionStorage.getItem('currentDocumentID')){
-            // $.get("http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+"&edit=true", function(data) {
-            //     $('input#docName').val(data.title); // set document title
-            //     editor.setContent(data.content);  // set document content
-            // });
-            // this was easier than figuring out how to pass the object from read.js
-            $.ajax({
-                method: 'GET',
-                // assuming api call GET http://localhost:8080/document/6297e25965bdf90c83f73686?user=bbb&edit=true requests edit access
-                url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"&edit=true",
-                success: function(){
-                    $('input#docName').val(data.title); // set document title
-                    editor.setContent(data.content);  // set document content
-                },
-                error: function(){
-                    alert("Sorry, something went wrong");
-                    window.location = './read.html';
-                },
+            $.get("http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID'), function(data) {
+                $('input#docName').val(data.title); // set document title
+                editor.setContent(data.content);  // set document content
             });
+            // this was easier than figuring out how to pass the object from read.js
+            // $.ajax({
+            //     method: 'GET',
+            //     url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"&edit=true",
+            //     success: function(){
+            //         $('input#docName').val(data.title); // set document title
+            //         editor.setContent(data.content);  // set document content
+            //     },
+            //     error: function(){
+            //         alert("Sorry, something went wrong");
+            //         window.location = './read.html';
+            //     },
+            // });
         }
     }
   });
@@ -97,7 +96,8 @@ function saveDoc(name, content){
         data: JSON.stringify(docObj),
         success: function(data){
             alert('Saved!');
-            if(requestUrl === 'http://localhost:8080/document/add') sessionStorage.setItem('currentDocumentID', data.id);
+            // if(requestUrl === 'http://localhost:8080/document/add') sessionStorage.setItem('currentDocumentID', data.id);
+            if(requestUrl === 'http://localhost:8080/document/add') window.location = './index.html';
         },
         error: function(){
             alert('Sorry, something went wrong');
