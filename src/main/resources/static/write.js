@@ -20,7 +20,7 @@ $('textarea#tiny').tinymce({
             $.ajax({
                 method: 'GET',
                 // assuming api call GET http://localhost:8080/document/6297e25965bdf90c83f73686?user=bbb&edit=true requests edit access
-                url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"?edit=true",
+                url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"&edit=true",
                 success: function(){
                     $('input#docName').val(data.title); // set document title
                     editor.setContent(data.content);  // set document content
@@ -95,8 +95,9 @@ function saveDoc(name, content){
         url: requestUrl,
         contentType: 'application/json',
         data: JSON.stringify(docObj),
-        success: function(){
+        success: function(data){
             alert('Saved!');
+            if(requestUrl === 'http://localhost:8080/document/add') sessionStorage.setItem('currentDocumentID', data.id);
         },
         error: function(){
             alert('Sorry, something went wrong');

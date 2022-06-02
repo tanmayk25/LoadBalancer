@@ -49,7 +49,7 @@ $('button.btn-close').on('click', function(){
 function checkEditAccess(){
     $.ajax({
         method: 'GET',
-        url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"?edit=true",
+        url: "http://localhost:8080/document/"+sessionStorage.getItem('currentDocumentID')+"?user="+sessionStorage.getItem('author')+"&edit=true",
         beforeSend: function(){
             if($('#modal-error-message').is(":visible")) $('#modal-error-message').hide();
             $('#spinner').show();
