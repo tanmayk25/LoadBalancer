@@ -85,7 +85,7 @@ function saveDoc(name, content){
     };
     // new document
     if(!sessionStorage.getItem('currentDocumentID')) {
-        requestUrl = 'http://localhost:8080/document/add'; // switch url
+        requestUrl = 'http://localhost:8080/document/add/' + sessionStorage.getItem("author"); // switch url
         docObj.author = sessionStorage.getItem('author'); // add author to object
     }
     console.log(docObj);
@@ -97,7 +97,7 @@ function saveDoc(name, content){
         success: function(data){
             alert('Saved!');
             // if(requestUrl === 'http://localhost:8080/document/add') sessionStorage.setItem('currentDocumentID', data.id);
-            if(requestUrl === 'http://localhost:8080/document/add') window.location = './index.html';
+            // if(requestUrl === 'http://localhost:8080/document/add') window.location = './index.html';
         },
         error: function(){
             alert('Sorry, something went wrong');

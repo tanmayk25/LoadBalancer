@@ -16,7 +16,7 @@ $.get("http://localhost:8080/document/all", function(data) {
         newDoc.find('td.doc-name').html(doc.title);
         newDoc.find('td.author').html(doc.author);
         newDoc.find('td.created-date').html(doc.createdDate);
-        newDoc.find('td.version').html(doc.version);
+        newDoc.find('td.version').html(doc.lastModifiedDate);
         newDoc[0].id=doc.id;
         $("tbody").append(newDoc);
         newDoc.show();
